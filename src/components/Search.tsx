@@ -1,31 +1,15 @@
 import { Input } from 'antd'
-import { getRecipes } from '../modules/edamam'
 import { useState } from 'react'
-import { toast } from 'react-toastify';
 
 const { Search: AntSearch } = Input
 
 interface SearchProps {
-    onSearchResult: (result: any) => void
+    onSearch: (search: any) => void
+    isLoading: boolean
 }
 
-function Search({ onSearchResult }: SearchProps) {
+function Search({ onSearch, isLoading }: SearchProps) {
     const [search, setSearch] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
-
-    const handleSearch = async () => {
-        if (search === '') return
-        setIsLoading(true)
-        try {
-            const result = await getRecipes(search)
-            onSearchResult(result)
-        } catch (error) {
-            console.error(error)
-            toast.error('Something went wrong')
-        } finally {
-            setIsLoading(false)
-        }
-    }
 
     return (
         <div>
@@ -35,7 +19,7 @@ function Search({ onSearchResult }: SearchProps) {
                 loading={isLoading}
                 enterButton
                 onChange={(v) => setSearch(v.target.value)}
-                onSearch={handleSearch}
+                onSearch={() => onSearch(search)}
             />
         </div>
     )

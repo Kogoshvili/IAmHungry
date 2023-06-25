@@ -25,3 +25,24 @@ export async function getRecipes(query: string): Promise<RecipeSearchResponse> {
         nextPage: response.data._links.next.href
     }
 }
+
+export async function getMoreRecipes(url: string): Promise<RecipeSearchResponse> {
+    const parameters = new URLSearchParams(url.split('?')[1]);
+    const query = parameters.get('q') || ''
+    const cont = parameters.get('_cont') || ''
+
+    const response = await edamam.get<RecipeResponse>('', {
+        params: {
+            q: query,
+            _cont: cont
+        }
+    })
+
+    return {
+        count: response.data.count,
+        from: response.data.from,
+        to: response.data.to,
+        recipes: response.data.hits.map(hit => hit.recipe),
+        nextPage: response.data._links.next.href
+    }
+}
